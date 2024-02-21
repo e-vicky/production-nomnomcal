@@ -35,7 +35,7 @@ app.use("/api/v1/bookings", require("./routes/consultationRoutes"));
 //home
 app.get("/", (req,res) => {
     res.status(200).send({
-        ""success:true,
+        "success":true,
         "msg":"Node Server Running"
         })
 })
