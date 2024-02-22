@@ -428,8 +428,10 @@ const getAllPendingDiy = async (req, res) => {
     try {
         
         // Query the diyModel to find all documents with status "pending"
-        const diyMealKitsOrders = await diyModel.find().populate('postedBy', 'name address.block address.street address.building address.floor address.unit address.country address.postal allergyString').exec();
-        
+        const diyMealKitsOrders = await diyModel.find()
+            .populate('postedBy', 'name address.block address.street address.building address.floor address.unit address.country address.postal allergyString')
+            .sort({ createdAt: -1 }) 
+            .exec();
 
         res.status(200).send({
             success: true,
