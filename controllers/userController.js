@@ -473,11 +473,13 @@ const updateUserController = async (req, res) => {
     {
         // Parse Request Body
         // Destructure name, password, email from request body (req.body)
+        
         const {name, password, email, totalCalories, height, weight} = req.body;
         // Find User and Validate Password
         // Find user with the provided email in the database
         // Validate password length when password is provided
         const user = await userModel.findOne({email});
+        const role = user.role;
         if (password && password.length < 6)
         {
             return res.status(400).send({
@@ -485,21 +487,21 @@ const updateUserController = async (req, res) => {
                 message: "Password is required and should be 6 characters long"
             });
         }
-
-        if (!totalCalories)
-        {
-            return res.status(400).send({
-                success: false,
-                message: "Goal calorie limit is required"
-            });
+        if (role === 'user') {
+            if (!totalCalories) {
+                return res.status(400).send({
+                    success: false,
+                    message: "Goal calorie limit is required"
+                });
+            }
+            if (totalCalories < 800 || totalCalories > 3000) {
+                return res.status(400).send({
+                    success: false,
+                    message: "Goal calorie limit is not within range, please enter between 800 to 3000"
+                });
+            }
         }
-        if (totalCalories < 800 || totalCalories > 3000)
-        {
-            return res.status(400).send({
-                success: false,
-                message: "Goal calorie limit is not within range, please enter between 800 to 3000"
-            });
-        }
+        
         const hashedPassword = password ? await hashPassword(password) : undefined;
         // Parse totalCalories to a number if it's not null or undefined
         const parsedTotalCalories = totalCalories !== null && totalCalories !== undefined ? Number(totalCalories) : undefined;
